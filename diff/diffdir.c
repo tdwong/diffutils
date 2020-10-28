@@ -37,7 +37,7 @@
 #include "diff.h"
 #include "xmalloc.h"
 
-static int selectfile(struct dirent *);
+static int selectfile(const struct dirent *);
 static void diffit(struct dirent *, char *, size_t, char *, size_t, int);
 
 #define d_status	d_type		/* we need to store status for -l */
@@ -232,7 +232,7 @@ diffit(struct dirent *dp, char *path1, size_t plen1, char *path2, size_t plen2,
  * diff, else 0.  Checks the excludes list.
  */
 static int
-selectfile(struct dirent *dp)
+selectfile(const struct dirent *dp)
 {
 	struct excludes *excl;
 

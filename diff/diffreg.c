@@ -64,6 +64,9 @@
  *	@(#)diffreg.c   8.1 (Berkeley) 6/6/93
  */
 
+#define _POSIX_C_SOURCE 1       // fileno
+#define _XOPEN_SOURCE   500     // S_IFMT, pread
+
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -81,6 +84,11 @@
 #include "diff.h"
 #include "pathnames.h"
 #include "xmalloc.h"
+
+// build on Linux
+//#include <limits.h>
+#include <stdint.h>     // SIZE_MAX
+#include <time.h>       // ctime
 
 /*
  * diff - compare two files.
@@ -533,7 +541,7 @@ opentemp(const char *file)
 }
 
 char *
-splice(char *dir, char *file)
+splice_(char *dir, char *file)
 {
 	char *tail, *buf;
 
@@ -1297,7 +1305,7 @@ asciifile(FILE *f)
 	return (1);
 }
 
-#define begins_with(s, pre) (strncmp(s, pre, sizeof(pre)-1) == 0)
+#define begins_with(s, pre) (strncmp((char*)s, pre, sizeof(pre)-1) == 0)
 
 static char *
 match_function(const long *f, int pos, FILE *fp)
@@ -1316,7 +1324,7 @@ match_function(const long *f, int pos, FILE *fp)
 		nc = fread(buf, 1, nc, fp);
 		if (nc > 0) {
 			buf[nc] = '\0';
-			buf[strcspn(buf, "\n")] = '\0';
+			buf[strcspn((char*)buf, "\n")] = '\0';
 			if (isalpha(buf[0]) || buf[0] == '_' || buf[0] == '$') {
 				if (begins_with(buf, "private:")) {
 					if (!state)
@@ -1328,7 +1336,7 @@ match_function(const long *f, int pos, FILE *fp)
 					if (!state)
 						state = " (public)";
 				} else {
-					strlcpy(lastbuf, buf, sizeof lastbuf);
+					strlcpy(lastbuf, (char*)buf, sizeof lastbuf);
 					if (state)
 						strlcat(lastbuf, state,
 						    sizeof lastbuf);

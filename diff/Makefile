@@ -1,7 +1,20 @@
 #	$OpenBSD: Makefile,v 1.3 2007/05/29 18:24:56 ray Exp $
 
 PROG=	diff
-SRCS=	diff.c diffdir.c diffreg.c xmalloc.c
+SRCS=	diff.c diffdir.c diffreg.c xmalloc.c \
+		strlcat.c scandir.c
 COPTS+= -Wall
+CFLAGS += $(COPTS) -g
 
-.include <bsd.prog.mk>
+$(PROG): $(SRCS:.c=.o)
+	$(CC) -o $@ $(CFLAGS) $(SRCS:.c=.o)
+
+.PHONY: clean cleanall
+
+clean:
+	$(RM) $(SRCS:.c=.o)
+
+cleanall: clean
+	$(RM) $(PROG)
+
+## .include <bsd.prog.mk>

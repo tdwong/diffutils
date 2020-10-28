@@ -13,6 +13,8 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
+#define _GNU_SOURCE         // vasprintf
+
 #include <err.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -22,6 +24,10 @@
 #include <string.h>
 
 #include "xmalloc.h"
+
+// build on Linux
+size_t strlcpy(char *dst, const char *src, size_t size);
+size_t strlcat(char *dst, const char *src, size_t size);
 
 void *
 xmalloc(size_t size)

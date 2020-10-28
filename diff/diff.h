@@ -34,6 +34,12 @@
 #include <sys/types.h>
 #include <regex.h>
 
+#ifdef ANDROID
+ #ifndef _PATH_TMP
+ #define _PATH_TMP  "/data/misc"
+ #endif //! _PATH_TMP
+#endif  //ANDROID
+
 /*
  * Output format options
  */
@@ -91,7 +97,7 @@ extern struct	stat stb1, stb2;
 extern struct	excludes *excludes_list;
 extern regex_t	ignore_re;
 
-char	*splice(char *, char *);
+char	*splice_(char *, char *);
 int	diffreg(char *, char *, int);
 int	easprintf(char **, const char *, ...);
 void	*emalloc(size_t);
@@ -99,3 +105,9 @@ void	*erealloc(void *, size_t);
 void	diffdir(char *, char *, int);
 void	print_only(const char *, size_t, const char *);
 void	print_status(int, char *, char *, char *);
+
+// build on Linux
+size_t strlcpy(char *dst, const char *src, size_t size);
+size_t strlcat(char *dst, const char *src, size_t size);
+char * fgetln(FILE *stream, size_t *len);
+

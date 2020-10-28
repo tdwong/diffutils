@@ -20,6 +20,10 @@
  * Materiel Command, USAF, under agreement number F39502-99-1-0512.
  */
 
+#define _POSIX_C_SOURCE 200809L
+#define _XOPEN_SOURCE   700
+#define _GNU_SOURCE     1
+
 #include <sys/param.h>
 #include <sys/stat.h>
 
@@ -36,6 +40,9 @@
 
 #include "diff.h"
 #include "xmalloc.h"
+
+// build on Linux
+// ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 
 int	 lflag, Nflag, Pflag, rflag, sflag, Tflag;
 int	 diff_format, diff_context, status;
@@ -255,12 +262,12 @@ main(int argc, char **argv)
 		diffdir(argv[0], argv[1], dflags);
 	} else {
 		if (S_ISDIR(stb1.st_mode)) {
-			argv[0] = splice(argv[0], argv[1]);
+			argv[0] = splice_(argv[0], argv[1]);
 			if (stat(argv[0], &stb1) < 0)
 				err(2, "%s", argv[0]);
 		}
 		if (S_ISDIR(stb2.st_mode)) {
-			argv[1] = splice(argv[1], argv[0]);
+			argv[1] = splice_(argv[1], argv[0]);
 			if (stat(argv[1], &stb2) < 0)
 				err(2, "%s", argv[1]);
 		}
@@ -301,7 +308,13 @@ read_excludes_file(char *file)
 		fp = stdin;
 	else if ((fp = fopen(file, "r")) == NULL)
 		err(2, "%s", file);
-	while ((buf = fgetln(fp, &len)) != NULL) {
+//	while ((buf = fgetln(fp, &len)) != NULL)
+#ifndef ANDROID
+	while ((len = getline(&buf, &len, fp)) != -1)
+#else
+	while ((len = getline(&buf, &len, fp)) == 0)
+#endif  //!ANDROID
+    {
 		if (buf[len - 1] == '\n')
 			len--;
 		pattern = xmalloc(len + 1);
