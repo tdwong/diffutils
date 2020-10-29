@@ -562,13 +562,13 @@ prepare(int i, FILE *fd, off_t filesize, int flags)
 
 	rewind(fd);
 
-	sz = (filesize <= SIZE_MAX ? filesize : SIZE_MAX) / 25;
+	sz = (filesize <= (off_t)SIZE_MAX ? filesize : SIZE_MAX) / 25;
 	if (sz < 100)
 		sz = 100;
 
 	p = xcalloc(sz + 3, sizeof(*p));
 	for (j = 0; (h = readhash(fd, flags));) {
-		if (j == sz) {
+		if (j == (int)sz) {
 			sz = sz * 3 / 2;
 			p = xrealloc(p, sz + 3, sizeof(*p));
 		}
