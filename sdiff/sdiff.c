@@ -5,6 +5,10 @@
  * Public domain.
  */
 
+//#define _POSIX_C_SOURCE 1       // fileno
+//#define _XOPEN_SOURCE   500     // S_IFMT, pread
+#define _GNU_SOURCE     // asprintf
+
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -25,6 +29,20 @@
 #include "common.h"
 #include "extern.h"
 #include "queue.h"
+
+// build on Linux
+//#include <limits.h>
+#include <stdint.h>     // SIZE_MAX
+size_t strlcpy(char *dst, const char *src, size_t size);
+size_t strlcat(char *dst, const char *src, size_t size);
+long long strtonum(const char *numstr, long long minval, long long maxval, const char **errstrp);
+char *fparseln(FILE *fp, size_t *size, size_t *lineno, const char str[3], int flags);
+
+#ifdef ANDROID
+ #ifndef _PATH_TMP
+ #define _PATH_TMP  "/data/misc"
+ #endif //! _PATH_TMP
+#endif  //ANDROID
 
 #define WIDTH 130
 /*

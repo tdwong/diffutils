@@ -5,6 +5,11 @@
  * Public domain.
  */
 
+//#define _POSIX_C_SOURCE 1       // fileno
+//#define _XOPEN_SOURCE   500     // S_IFMT, pread
+#define _GNU_SOURCE     // asprintf
+#define __USE_MISC      // sig_t
+
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -20,6 +25,16 @@
 
 #include "common.h"
 #include "extern.h"
+
+// build on Linux
+#ifdef ANDROID
+ #ifndef _PATH_VI
+ #define _PATH_VI  "/system/xbin/vi"
+ #endif //! _PATH_VI
+ #ifndef _PATH_BSHELL
+ #define _PATH_BSHELL  "/system/bin/sh"
+ #endif //! _PATH_BSHELL
+#endif  //ANDROID
 
 int editit(const char *);
 
@@ -146,7 +161,7 @@ RIGHT:
 
 		len = strlen(text);
 		if ((nwritten = write(fd, text, len)) == -1 ||
-		    nwritten != len) {
+		    nwritten != (ssize_t)len) {
 			warn("error writing to temp file");
 			cleanup(filename);
 		}
