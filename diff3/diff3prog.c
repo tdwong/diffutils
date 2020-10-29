@@ -64,6 +64,10 @@
  *	@(#)diff3.c	8.1 (Berkeley) 6/6/93
  */
 
+#define _POSIX_C_SOURCE 200809L		// getline
+#define _XOPEN_SOURCE   700			// getline
+#define _GNU_SOURCE     1			// getline
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -272,8 +276,17 @@ f0getln(FILE *b, size_t *n)
 	static char *buf;
 	static size_t bufsize;
 
-	if ((cp = fgetln(b, &len)) == NULL)
+    // allow getline to allocate the memory buffer
+    len = 0;
+    cp  = NULL;
+
+    ssize_t rlen;
+//	if ((cp = fgetln(b, &len)) == NULL)
+	if ((rlen = getline(&cp, &len, b)) == -1)
 		return (NULL);
+
+    //
+    len = (size_t) rlen;
 
 	if (cp[len - 1] != '\n')
 		len++;
@@ -289,6 +302,10 @@ f0getln(FILE *b, size_t *n)
 	buf[len] = '\0';
 	if (n != NULL)
 		*n = len;
+
+    // free the memory allocated by getline
+    if (cp) { free(cp); }
+
 	return (buf);
 }
 
