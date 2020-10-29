@@ -135,11 +135,7 @@ fparseln(FILE *fp, size_t *size, size_t *lineno, const char str[3], int flags)
 
         ssize_t rlen;
 //		if ((ptr = fgetln(fp, &s)) == NULL)
-#ifndef ANDROID
 		if ((rlen = getline(&ptr, &s, fp)) == -1)
-#else
-		if ((rlen = getline(&ptr, &s, fp)) == 0)
-#endif  //!ANDROID
 			break;
 
         //
