@@ -90,6 +90,14 @@
 #include <stdint.h>     // SIZE_MAX
 #include <time.h>       // ctime
 
+#ifdef  ANDROID
+// ML1 ANDROID : resize SIZE_KAX
+#if SIZE_MAX > (4294967295UL)
+#   undef  SIZE_MAX
+#   define SIZE_MAX		(4294967295UL)
+#endif
+#endif  //ANDROID
+
 /*
  * diff - compare two files.
  */
