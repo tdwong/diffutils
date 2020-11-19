@@ -9,12 +9,12 @@ CFLAGS += $(COPTS) -g
 $(PROG): $(SRCS:.c=.o)
 	$(CC) -o $@ $(CFLAGS) $(SRCS:.c=.o)
 
-.PHONY: clean cleanall
+.PHONY: clean cleanall clean-all
 
 clean:
 	$(RM) $(SRCS:.c=.o)
 
-cleanall: clean
+clean-all cleanall: clean
 	$(RM) $(PROG)
 
 ## .include <bsd.prog.mk>

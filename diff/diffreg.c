@@ -90,13 +90,13 @@
 #include <stdint.h>     // SIZE_MAX
 #include <time.h>       // ctime
 
-#ifdef  ANDROID
+//#ifdef  ANDROID
 // ML1 ANDROID : resize SIZE_KAX
 #if SIZE_MAX > (4294967295UL)
 #   undef  SIZE_MAX
 #   define SIZE_MAX		(4294967295UL)
 #endif
-#endif  //ANDROID
+//#endif  //ANDROID
 
 /*
  * diff - compare two files.
@@ -517,7 +517,7 @@ opentemp(const char *file)
 
 	if (strcmp(file, "-") == 0)
 		ifd = STDIN_FILENO;
-	else if ((ifd = open(file, O_RDONLY, 0644)) < 0)
+	else if ((ifd = open(file, O_RDONLY, 0/*0644*/)) < 0)
 		return (NULL);
 
 	if ((tempdir = getenv("TMPDIR")) == NULL)
